@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+  <group name ="Video Cut">
+    <class name="Cut Point">
+	<label name="Frame"/>
+    </class>
+  </group>
+</Root>

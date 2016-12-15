@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\TinyXML">
+      <UniqueIdentifier>{121e4239-1b97-497d-9fef-3cc0f7afa046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\TinyXML">
+      <UniqueIdentifier>{e2ae7538-de74-485c-b3b8-0ba48887736e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\OpenCV">
+      <UniqueIdentifier>{3f23432b-a90c-41b2-83a8-46d7c30d5bd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\OpenCV">
+      <UniqueIdentifier>{018ec43d-7631-404f-9469-8f5d473c5508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\CBitmapSlider">
+      <UniqueIdentifier>{159f11b6-1cac-49a5-a090-846129a6dd96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\CBitmapSlider">
+      <UniqueIdentifier>{e69897ce-e6f4-4741-90fd-0dfb9ef244c8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CImportDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CVideoLabelFile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CVideoLabelDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CVideoLabelApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>头文件\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>头文件\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="LabelXMLFile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CvvImage.h">
+      <Filter>头文件\OpenCV</Filter>
+    </ClInclude>
+    <ClInclude Include="cvPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CBitmapSlider\BitmapSlider.h">
+      <Filter>头文件\CBitmapSlider</Filter>
+    </ClInclude>
+    <ClInclude Include="CBitmapSlider\memdc.h">
+      <Filter>头文件\CBitmapSlider</Filter>
+    </ClInclude>
+    <ClInclude Include="CTxtDialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CVideoLabelDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>源文件\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>源文件\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>源文件\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>源文件\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="CVideoLabelApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EventController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CVideoLabelFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CImportDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cvPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CvvImage.cpp">
+      <Filter>源文件\OpenCV</Filter>
+    </ClCompile>
+    <ClCompile Include="LabelXMLFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CBitmapSlider\BitmapSlider.cpp">
+      <Filter>源文件\CBitmapSlider</Filter>
+    </ClCompile>
+    <ClCompile Include="CTxtDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VideoLabel.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\VideoLabel.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\VideoLabel.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\mp_channel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\mp_channel_active.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\mp_thumb.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\mp_thumb_active.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
