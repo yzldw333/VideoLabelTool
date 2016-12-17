@@ -11,7 +11,10 @@ typedef struct LabelXMLFileNode{
 }LabelXMLFileNode;
 class CLabelXMLFileIOController
 {
+private:
+	static CString fileName;
 public:
 	static LabelXMLFileNode GetLabelXMLFileNode(CString fileName);
 	static LabelXMLFileNode OnGetXMLFileNode(TiXmlElement *item);
+	static void SaveLabelXMLFileNode(LabelXMLFileNode& node);
 };

@@ -10,6 +10,7 @@
 #include "CVideoLabelFile.h"
 #include "CvvImage.h"
 #include "VideoCut/cut.h"
+#include "CTxtDialog.h"
 #include <vector>
 using namespace std;
 #ifdef _DEBUG
@@ -122,6 +123,8 @@ BEGIN_MESSAGE_MAP(CVideoLabelDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_LAST1SEC, &CVideoLabelDlg::OnBnClickedLast1sec)
 	ON_BN_CLICKED(IDC_BT_NEXT1SEC, &CVideoLabelDlg::OnBnClickedBtNext1sec)
 	ON_NOTIFY(NM_RCLICK, IDC_TRE_LABEL, &CVideoLabelDlg::OnNMRClickTreLabel)
+	ON_COMMAND(ID__32788, &CVideoLabelDlg::OnPressAddLabelItem)
+	ON_COMMAND(ID__32789, &CVideoLabelDlg::OnPressDelLabelItem)
 END_MESSAGE_MAP()
 
 
@@ -896,8 +899,6 @@ void CVideoLabelDlg::OnBnClickedBtAddlabel()
 		OnRefreshListShowCtrl();
 	}
 }
-
-
 BOOL CVideoLabelDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO:  在此添加专用代码和/或调用基类
@@ -922,7 +923,6 @@ BOOL CVideoLabelDlg::PreTranslateMessage(MSG* pMsg)
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
-
 void CVideoLabelDlg::OnExitSubVideoState()
 {
 	m_player.SetIsSubVideoState(FALSE);
@@ -935,9 +935,6 @@ void CVideoLabelDlg::OnExitSubVideoState()
 	m_Slider.SetPos(m_player.GetSubEnd());
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
 }
-
-
-
 void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
@@ -984,8 +981,6 @@ void CVideoLabelDlg::OnDelLabel()
 		}
 	}
 }
-
-
 void CVideoLabelDlg::OnNMRClickLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
@@ -1002,8 +997,6 @@ void CVideoLabelDlg::OnNMRClickLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 	// TODO:  在此添加控件通知处理程序代码
 	*pResult = 0;
 }
-
-
 void CVideoLabelDlg::LocateImage(long pos)
 {
 	KillTimer(1);
@@ -1030,7 +1023,6 @@ void CVideoLabelDlg::LocateImage(long pos)
 	UpdateData(FALSE);
 	return;
 }
-
 void CVideoLabelDlg::OnBnClickedBtLastKey()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -1052,8 +1044,6 @@ void CVideoLabelDlg::OnBnClickedBtLastKey()
 		}
 	}
 }
-
-
 void CVideoLabelDlg::OnBnClickedBtNextKey()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -1091,7 +1081,6 @@ void CVideoLabelDlg::OnBnClickedNextFrame()
 		m_Slider.UpdateData();
 	}
 }
-
 void CVideoLabelDlg::OnBnClickedLast1sec()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -1104,8 +1093,6 @@ void CVideoLabelDlg::OnBnClickedLast1sec()
 		m_Slider.UpdateData();
 	}
 }
-
-
 void CVideoLabelDlg::OnBnClickedBtNext1sec()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -1124,5 +1111,91 @@ void CVideoLabelDlg::OnNMRClickTreLabel(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO:  在此添加控件通知处理程序代码
 	*pResult = 0;
+	int i = 0;
+	HTREEITEM hItem = m_tre_label.GetSelectedItem();
+	HTREEITEM hParent = m_tre_label.GetParentItem(hItem);
+	while (hParent != NULL)
+	{
+		hParent = m_tre_label.GetParentItem(hParent);
+		i++;
+	}
+
+	LPNMITEMACTIVATE pNMListView = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	if (pNMListView->iItem != -1)
+	{
+		DWORD dwPos = GetMessagePos();
+		CPoint point(LOWORD(dwPos), HIWORD(dwPos));
+		CMenu menu;
+		VERIFY(menu.LoadMenu(IDR_MENU4));
+		if (i == 2)
+			//第三层不添加项，只能删除
+			menu.EnableMenuItem(ID__32788, 1);
+		CMenu* popup = menu.GetSubMenu(0);
+		ASSERT(popup != NULL);
+		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+	}
+}
+void CVideoLabelDlg::UpdateLabelXMLFileNode()
+{
+	TCHAR buffer[256] = { 0 };
+	TCITEMW tabItem = GetTabSelectItem(m_tab_label, buffer);
+	CString domain = tabItem.pszText;
+	list<LabelXMLFileNode>::iterator it = m_labelXMLFileNode.childrenList.begin();
+	while (it != m_labelXMLFileNode.childrenList.end())
+	{
+		if (it->value == domain)
+		{
+			break;
+		}
+		it++;
+	}
+	if (it == m_labelXMLFileNode.childrenList.end())
+		return;
+	it->childrenList.clear();
+	it->hasChildren = 0;
+	HTREEITEM hItem = m_tre_label.GetRootItem();
+	while (hItem != NULL)
+	{
+		OnUpdateLabelXMLFileNode(hItem, *it);
+		hItem = m_tre_label.GetNextSiblingItem(hItem);
+	}
+}
+void CVideoLabelDlg::OnUpdateLabelXMLFileNode(HTREEITEM hItem,LabelXMLFileNode& parent)
+{
+	parent.hasChildren = 1;
+	LabelXMLFileNode node;
+	node.hasChildren = 0;
+	node.value = m_tre_label.GetItemText(hItem);
+	HTREEITEM hChildItem = m_tre_label.GetChildItem(hItem);
+	while (hChildItem != NULL)
+	{
+		OnUpdateLabelXMLFileNode(hChildItem, node);
+		hChildItem = m_tre_label.GetNextSiblingItem(hChildItem);
+	}
+	parent.childrenList.push_back(node);
+}
+
+void CVideoLabelDlg::OnPressAddLabelItem()
+{
+	// TODO:  在此添加命令处理程序代码
+	HTREEITEM hItem = m_tre_label.GetSelectedItem();
+	CTxtDialog dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		CString str = dlg.GetText();
+		m_tre_label.InsertItem(str, hItem);
+	}
+	//labelXML文件修改
+	UpdateLabelXMLFileNode();
+	CLabelXMLFileIOController::SaveLabelXMLFileNode(m_labelXMLFileNode);
+}
+void CVideoLabelDlg::OnPressDelLabelItem()
+{
+	// TODO:  在此添加命令处理程序代码
+	HTREEITEM hItem = m_tre_label.GetSelectedItem();
+	m_tre_label.DeleteItem(hItem);
+	//labelXML文件修改
+	UpdateLabelXMLFileNode();
+	CLabelXMLFileIOController::SaveLabelXMLFileNode(m_labelXMLFileNode);
 
 }

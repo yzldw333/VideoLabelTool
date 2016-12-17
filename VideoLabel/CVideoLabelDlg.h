@@ -67,6 +67,8 @@ public:
 	afx_msg LRESULT OnSliderMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnReleaseSliderMessage(WPARAM wParam, LPARAM lParam);
 	void OnPreviewImageWithPos();
+	void UpdateLabelXMLFileNode();
+	void OnUpdateLabelXMLFileNode(HTREEITEM hItem, LabelXMLFileNode &parent);
 protected:
 	HICON m_hIcon;
 	CTreeCtrl m_tre_file;
@@ -116,4 +118,6 @@ public:
 	afx_msg void OnBnClickedLast1sec();
 	afx_msg void OnBnClickedBtNext1sec();
 	afx_msg void OnNMRClickTreLabel(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPressAddLabelItem();
+	afx_msg void OnPressDelLabelItem();
 };

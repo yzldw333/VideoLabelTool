@@ -81,8 +81,8 @@ void CEventController::SaveEnv(CString folderPath, CString labelXMLPath)
 	setlocale(LC_CTYPE, old_locale);
 	free(old_locale);//还原区域设定
 	f.Close();
-	
 }
+
 //BOOL CEventController::OnAddLabel(CString fileName, CString domain, CString type, CString labelName, CRect drawrect, CRect winRect, CRect picRect, COLORREF color)
 //{
 //	CImageLabelFileIOController::GetInstance()->AddImageLabel(fileName, );

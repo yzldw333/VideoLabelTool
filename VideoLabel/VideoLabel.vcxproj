@@ -121,6 +121,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CVideoLabelApp.h" />
     <ClInclude Include="CVideoLabelDlg.h" />
+    <ClInclude Include="TinyXMLCommon.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
@@ -139,6 +140,7 @@
     </ClCompile>
     <ClCompile Include="CVideoLabelApp.cpp" />
     <ClCompile Include="CVideoLabelDlg.cpp" />
+    <ClCompile Include="TinyXMLCommon.cpp" />
     <ClCompile Include="TinyXML\tinystr.cpp" />
     <ClCompile Include="TinyXML\tinyxml.cpp" />
     <ClCompile Include="TinyXML\tinyxmlerror.cpp" />

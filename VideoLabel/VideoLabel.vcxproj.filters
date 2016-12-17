@@ -84,6 +84,9 @@
     <ClInclude Include="CTxtDialog.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TinyXMLCommon.h">
+      <Filter>头文件\TinyXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -129,6 +132,9 @@
       <Filter>源文件\CBitmapSlider</Filter>
     </ClCompile>
     <ClCompile Include="CTxtDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXMLCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
