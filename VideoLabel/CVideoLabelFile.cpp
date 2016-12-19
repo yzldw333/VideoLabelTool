@@ -74,28 +74,27 @@ void CVideoLabelFileIOController::AddClipLabel(CString fileName, long long start
 
 	isChanged = true;
 }
-void CVideoLabelFileIOController::ModifyClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label)
+void CVideoLabelFileIOController::ModifyClipLabel(CString fileName, int index, CClip newClip)
 {
-	/*list<CVideoFile>::iterator it = GetIteratorOfFile(fileName);
+	list<CVideoFile>::iterator it = GetIteratorOfFile(fileName);
 	if (it != videoFileList.end())
 	{
-	list<CClip>::iterator itt = (*it).clipList.begin();
-	while (itt != it->clipList.end())
-	{
-	itt++;
+		list<CClip>::iterator itt = (*it).clipList.begin();
+		int i = 0;
+		while (itt != it->clipList.end())
+		{
+			if (i == index)
+				break;
+			itt++;
+			i++;
+		}
+		itt->domain = newClip.domain;
+		itt->end = newClip.end;
+		itt->start = newClip.start;
+		itt->type = newClip.type;
+		itt->label = newClip.label;
 	}
-	}
-	itt->domain = domain;
-	if (itt->start != start || itt->end != end)
-	{
-	if (end != 0)
-	itt->end = itt->start + end;
-	itt->start= itt->start + start;
-	}
-	itt->type = type;
-	itt->label = label;
-	itt->clipFileName = newClipFileName;
-	isChanged = true; */
+	isChanged = true; 
 }
 void CVideoLabelFileIOController::DeleteClipLabel(CString fileName, int index)
 {

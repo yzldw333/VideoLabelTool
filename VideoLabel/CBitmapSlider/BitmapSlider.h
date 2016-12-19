@@ -58,6 +58,8 @@ public:
 	BOOL SetBitmapChannel(
 		UINT nChannelID, UINT nActiveID=NULL, BOOL bTransparent=FALSE,
 		COLORREF clrpTransColor=0xFF000000, int iTransPixelX=0, int iTransPixelY=0 );
+	BOOL SetBitmapChannel(CBitmap &bitmap, UINT nActiveID = NULL, BOOL bTransparent = FALSE,
+		COLORREF clrpTransColor = 0xFF000000, int iTransPixelX = 0, int iTransPixelY = 0);
 
 	BOOL SetBitmapThumb(
 		UINT nThumbID, UINT nActiveID=NULL, BOOL bTransparent=FALSE,

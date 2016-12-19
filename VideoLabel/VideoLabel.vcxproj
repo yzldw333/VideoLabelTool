@@ -156,6 +156,8 @@
     <Image Include="res\bitmap1.bmp" />
     <Image Include="res\mp_channel.bmp" />
     <Image Include="res\mp_channel_active.bmp" />
+    <Image Include="res\mp_mini_channel.bmp" />
+    <Image Include="res\mp_mini_channel_active.bmp" />
     <Image Include="res\mp_thumb.bmp" />
     <Image Include="res\mp_thumb_active.bmp" />
     <Image Include="res\VideoLabel.ico" />

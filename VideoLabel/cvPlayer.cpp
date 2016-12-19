@@ -72,6 +72,7 @@ BOOL CVPlayer::ReadTmpFrameWithPos(IplImage ** pImg, int pos)
 			IplImage * retrieveFrame = cvRetrieveFrame(capture);
 			IplImage * newFrame = cvCloneImage(retrieveFrame);
 			*pImg = newFrame;
+
 			return TRUE;
 		}
 	}

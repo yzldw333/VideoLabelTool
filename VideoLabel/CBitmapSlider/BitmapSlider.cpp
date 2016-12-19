@@ -17,6 +17,31 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 
+HBITMAP CopyBitmap(HBITMAP hSourceHbitmap)
+{
+	CDC sourceDC;
+	CDC destDC;
+	sourceDC.CreateCompatibleDC(NULL);
+	destDC.CreateCompatibleDC(NULL);
+	//The bitmap information.
+	BITMAP bm = { 0 };
+	//Get the bitmap information.
+	::GetObject(hSourceHbitmap, sizeof(bm), &bm);
+	// Create a bitmap to hold the result
+	HBITMAP hbmResult = ::CreateCompatibleBitmap(CClientDC(NULL), bm.bmWidth, bm.bmHeight);
+
+	HBITMAP hbmOldSource = (HBITMAP)::SelectObject(sourceDC.m_hDC, hSourceHbitmap);
+	HBITMAP hbmOldDest = (HBITMAP)::SelectObject(destDC.m_hDC, hbmResult);
+	destDC.BitBlt(0, 0, bm.bmWidth, bm.bmHeight, &sourceDC, 0, 0, SRCCOPY);
+
+	// Restore DCs
+	::SelectObject(sourceDC.m_hDC, hbmOldSource);
+	::SelectObject(destDC.m_hDC, hbmOldDest);
+	::DeleteObject(sourceDC.m_hDC);
+	::DeleteObject(destDC.m_hDC);
+
+	return hbmResult;
+}
 
 CBitmapSlider::CBitmapSlider()
 {
@@ -369,6 +394,7 @@ void CBitmapSlider::DrawFocusRect(BOOL bDraw, BOOL bRedraw)
 //		FALSE
 //			Function failes to load bitmaps.
 //
+
 BOOL CBitmapSlider::SetBitmapChannel(
 	UINT nChannelID, UINT nActiveID , BOOL bTransparent,
 	COLORREF clrpTransColor, int iTransPixelX, int iTransPixelY )
@@ -451,6 +477,80 @@ BOOL CBitmapSlider::SetBitmapChannel(
 
 	return TRUE;
 }
+BOOL CBitmapSlider::SetBitmapChannel(
+	CBitmap &memBitmap, UINT nActiveID, BOOL bTransparent,
+	COLORREF clrpTransColor, int iTransPixelX, int iTransPixelY)
+{
+	// This control will not have any bitmap for channel
+	
+	
+	// load a bitmap
+	m_bmChannel.Detach();
+	m_bmChannel.DeleteObject();
+
+	m_bmChannel.Attach(CopyBitmap((HBITMAP)memBitmap));
+
+	// Prepare mask for transparency effect.
+	if (bTransparent) {
+
+		PrepareMask(&m_bmChannel, &m_bmChannelMask,
+			clrpTransColor, iTransPixelX, iTransPixelY);
+	}
+
+	// Load a bitmap for active state.
+	if (nActiveID) {
+
+		m_bmChannelActive.DeleteObject();
+
+		if (!m_bmChannelActive.LoadBitmap(nActiveID)) {
+
+			m_bmChannel.DeleteObject();
+			if (bTransparent)
+				m_bmChannelMask.DeleteObject();
+
+			return FALSE;
+		}
+
+		if (bTransparent) {
+
+			PrepareMask(&m_bmChannelActive, &m_bmChannelActiveMask,
+				clrpTransColor, iTransPixelX, iTransPixelY);
+		}
+
+		m_bChannelActive = TRUE;
+
+		// There is no bitmap for active state.
+	}
+	else
+		m_bChannelActive = FALSE;
+
+	// Get size of bitmap.
+	BITMAP	bitmap;
+	m_bmChannel.GetBitmap(&bitmap);
+
+	m_nWidth = bitmap.bmWidth;
+	m_nHeight = bitmap.bmHeight;
+
+	// Compare size
+	if (m_bChannelActive) {
+
+		BITMAP	bitmap;
+		m_bmChannelActive.GetBitmap(&bitmap);
+
+		ASSERT(m_nWidth == bitmap.bmWidth && m_nHeight == bitmap.bmHeight);
+	}
+
+	// Change size of control as same as the bitmap.
+	SetWindowPos(NULL, 0, 0, m_nWidth, m_nHeight, SWP_NOZORDER | SWP_NOMOVE);
+
+	GetClientRect(&m_rect);
+
+	m_bTransparentChannel = bTransparent;
+	m_bChannel = TRUE;
+
+	return TRUE;
+}
+
 
 // Load bitmaps for a thumb
 //

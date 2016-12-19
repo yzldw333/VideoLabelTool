@@ -77,7 +77,7 @@ public:
 	list<CVideoFile>::iterator GetIteratorOfFile(CString fileName);
 	list<CClip>::iterator GetIteratorOfClip(CString fileName, int index);
 	void AddClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label);
-	void ModifyClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label);
+	void ModifyClipLabel(CString fileName,int index,CClip newClip);
 	void DeleteClipLabel(CString fileName, int index);
 	bool GetIfExistFile(CString fileName);
 };

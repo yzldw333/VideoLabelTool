@@ -54,6 +54,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTcnSelchangeTabLabel(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedBtPlayPause();
 	afx_msg void CVideoLabelDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -120,4 +121,9 @@ public:
 	afx_msg void OnNMRClickTreLabel(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPressAddLabelItem();
 	afx_msg void OnPressDelLabelItem();
+	afx_msg void OnPressModifyLabelItem();
+protected:
+	CButton m_bt_lastSec;
+	CButton m_bt_nextSec;
+	CButton m_bt_clear;
 };
