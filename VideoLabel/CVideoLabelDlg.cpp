@@ -224,15 +224,12 @@ void CVideoLabelDlg::OnSize(UINT nType, int cx, int cy)
 	int nIncrementY = cy - 150;
 
 	m_tre_file.MoveWindow(0.01*cx, 0.01*cy, 0.12*cx, 0.99*cy);
-
-
 	m_picture.MoveWindow(0.14*cx, 0.01*cy, 0.7*cx, 0.65*cy);
 	int sliderwidth = 0.65*cx;
 	m_rect_pic.SetRect(0, 0, 0.7*cx, 0.65*cy);
 	m_pic_mark.MoveWindow(0.145*cx, 0.66*cy, sliderwidth, 0.015*cy);
-
 	m_Slider.MoveWindow(0.14*cx, 0.69*cy, sliderwidth, 0.01*cy);
-	m_Slider_tip.MoveWindow(0.145*cx, 0.71*cy, sliderwidth-0.01*cx, 0.02*cy);
+	m_Slider_tip.MoveWindow(0.145*cx, 0.71*cy, sliderwidth - 0.01*cx, 0.02*cy);
 	m_lst_show.MoveWindow(0.14*cx, 0.78*cy, 0.85*cx, 0.21*cy);
 	m_bt_play_pause.MoveWindow(0.14*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	m_bt_lastSec.MoveWindow(0.21*cx, 0.74*cy, 0.06*cx, 0.03*cy);
@@ -246,7 +243,7 @@ void CVideoLabelDlg::OnSize(UINT nType, int cx, int cy)
 	(GetDlgItem(IDC_STT_TIME))->MoveWindow(0.79*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	m_tab_label.MoveWindow(0.85*cx, 0.01*cy, 0.15*cx, 0.03*cy);
 	m_tre_label.MoveWindow(0.85*cx, 0.04*cy, 0.15*cx, 0.62*cy);
-
+	SetTimer(4, 50, NULL);	//刷新专用
 }
 void CVideoLabelDlg::OnDestroy()
 {
@@ -310,16 +307,10 @@ void CVideoLabelDlg::OnPaint()
 
 		// 绘制图标
 		dc.DrawIcon(x, y, m_hIcon);
-
 	}
 	else
 	{
-
 		CDialogEx::OnPaint();
-		
-		ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
-		
-		
 	}
 }
 
@@ -382,6 +373,11 @@ void CVideoLabelDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 		break;
 	}
+	case 4:
+		ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
+		ShowTriangleMark();
+		KillTimer(4);
+		break;
 	default:
 		break;
 	}
@@ -560,7 +556,8 @@ void CVideoLabelDlg::ShowCutPoint(CDC * pDC, int windowWidth, int windowHeight)
 	MemDC.SelectObject(pOldBit);
 	MemBitmap.DeleteObject();
 	MemDC.DeleteDC();
-	pOldBit->DeleteObject();
+	if (pOldBit!=NULL)
+		pOldBit->DeleteObject();
 	ReleaseDC(pDC);
 }
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -809,9 +806,10 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 	m_player.Open(videoPath);
-	m_Slider.SetRange(0, m_player.GetTotalFrame(), TRUE);
+	
 	// 将解码得到图像信息从缓存中转换成IplImage格式放在frame中
 	m_player.PrepareBuffer();
+	m_player.SetDrawFramePos(-1);
 	IplImage * img;
 	m_player.ReadFrameFromBuffer(&img);
 	ClearBitmap();
@@ -826,6 +824,9 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 	USES_CONVERSION;
 	m_vec_cutPoint = cut(T2A(videoPath));
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width()-23, 20);
+	m_Slider.SetRange(0, m_player.GetTotalFrame(), TRUE);
+	m_Slider.SetPos(0);
+
 }
 
 
