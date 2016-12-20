@@ -171,14 +171,12 @@ BOOL CVideoLabelDlg::OnInitDialog()
 		m_Slider.SetBitmapChannel(IDB_BP_MINI_CHANNEL,IDB_BP_MINI_CHANNEL_ACTIVE, TRUE);
 		m_Slider.SetBitmapThumb(IDB_BP_THUMB, IDB_BP_THUMB_ACTIVE, TRUE);
 	}
-		
 	else
 	{
 		SetWindowPos(NULL, 50, 50, 1510, 1000, SWP_NOMOVE);
 		m_Slider.SetBitmapChannel(IDB_BP_CHANNEL, IDB_BP_CHANNEL_ACTIVE, TRUE);
 		m_Slider.SetBitmapThumb(IDB_BP_THUMB, IDB_BP_THUMB_ACTIVE, TRUE);
 	}
-		
 	//list初始化
 	m_lst_show.DeleteAllItems();
 	while (m_lst_show.DeleteColumn(0));
@@ -188,6 +186,7 @@ BOOL CVideoLabelDlg::OnInitDialog()
 	m_lst_show.InsertColumn(4, _T("Domain"), LVCFMT_CENTER, 100);
 	m_lst_show.InsertColumn(5, _T("Type"), LVCFMT_CENTER, 100);
 	m_lst_show.InsertColumn(6, _T("Label"), LVCFMT_CENTER, 200);
+	m_lst_show.InsertColumn(7, _T("SubLabel"), LVCFMT_CENTER, 200);
 	m_lst_show.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP);//整列拖拽
 	UpdateData(FALSE);
 	// TODO:  在此添加额外的初始化代码
@@ -333,7 +332,8 @@ void CVideoLabelDlg::OnTimer(UINT_PTR nIDEvent)
 		//刷新
 		if (bitmapBuf.size() == 0)
 		{
-			m_ed_pos = m_Slider.GetRangeMax();
+			if (m_player.GetIsSubVideoState()==FALSE)
+				m_ed_pos = m_Slider.GetRangeMax();
 			m_player.SetState(STOP);
 			m_Slider.SetPos(m_Slider.GetRangeMin());
 			m_player.SetDrawFramePos(-1);
@@ -701,9 +701,10 @@ void CVideoLabelDlg::OnRefreshListShowCtrl()
 		m_lst_show.InsertItem(i, index);
 		m_lst_show.SetItemText(i, 1, startTime);
 		m_lst_show.SetItemText(i, 2, endTime);
-		m_lst_show.SetItemText(i, 3, (*itt).domain);
-		m_lst_show.SetItemText(i, 4, (*itt).type);
-		m_lst_show.SetItemText(i, 5, (*itt).label);
+		m_lst_show.SetItemText(i, 3, itt->domain);
+		m_lst_show.SetItemText(i, 4, itt->type);
+		m_lst_show.SetItemText(i, 5, itt->label);
+		m_lst_show.SetItemText(i, 6, itt->sublabel);
 		i++;
 	}
 	m_lst_show.EnsureVisible(m_lst_show.GetItemCount()-1, FALSE);
@@ -939,14 +940,13 @@ void CVideoLabelDlg::OnBnClickedBtAddlabel()
 		CString sublabel = _T("");
 		if (i > 0){
 			sublabel = str[--i];
-			label = label + _T("-") + sublabel;
 		}
 		
 		TCHAR buffer[256] = { 0 };
 		TCITEMW tabItem = GetTabSelectItem(m_tab_label, buffer);
 		CString domain = tabItem.pszText;
 		CString fileName = GetVideoFileTreePath(m_tre_file.GetSelectedItem(), FALSE);
-		CVideoLabelFileIOController::GetInstance()->AddClipLabel(fileName, m_bg_pos, m_ed_pos, domain, type, label);
+		CVideoLabelFileIOController::GetInstance()->AddClipLabel(fileName, m_bg_pos, m_ed_pos, domain, type, label,sublabel);
 		CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 		OnRefreshListShowCtrl();
 	}
@@ -994,7 +994,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 	TRACE(_T("double click "));
 	POSITION pos = m_lst_show.GetFirstSelectedItemPosition();
-	while (pos != NULL)
+	if (pos != NULL)
 	{
 		int delId = m_lst_show.GetNextSelectedItem(pos);
 		CString index = m_lst_show.GetItemText(delId, 0);
@@ -1007,9 +1007,11 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 		m_Slider.SetPos(it->start);
 		m_player.SetFramePos(it->start);
 		m_player.ClearImgBuf();
+		m_bg_pos = -1;
+		m_ed_pos = -1;
 		ClearBitmap();
 		ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
-		
+		ShowTriangleMark();
 	}
 }
 
@@ -1025,13 +1027,12 @@ void CVideoLabelDlg::OnDelLabel()
 		while (pos != NULL)
 		{
 			int delId = m_lst_show.GetNextSelectedItem(pos);
-			CString index = m_lst_show.GetItemText(delId, 0);
-			CString fileName = m_tre_file.GetItemText(m_tre_file.GetSelectedItem());
-			m_lst_show.DeleteItem(delId);
-			CVideoLabelFileIOController::GetInstance()->DeleteClipLabel(fileName, _ttoi(index));
+			CString fileName = GetVideoFileTreePath(m_tre_file.GetSelectedItem(), FALSE);
+			CVideoLabelFileIOController::GetInstance()->DeleteClipLabel(fileName, delId);
 			CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 		}
 	}
+	OnRefreshListShowCtrl();
 }
 void CVideoLabelDlg::OnNMRClickLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -1270,6 +1271,8 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	if (m_ed_pos >= 0)
 		clip.end = m_ed_pos;
 	
+	
+	
 	HTREEITEM selItem = m_tre_label.GetSelectedItem();
 	if (selItem == NULL)
 		return;
@@ -1286,7 +1289,7 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	CString sublabel = _T("");
 	if (i > 0){
 		sublabel = str[--i];
-		label = label + _T("-") + sublabel;
+		label = label;
 	}
 	TCHAR buffer[256] = { 0 };
 	TCITEMW tabItem = GetTabSelectItem(m_tab_label, buffer);
@@ -1294,7 +1297,7 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	clip.domain = domain;
 	clip.label = label;
 	clip.type = type;
-
+	clip.sublabel = sublabel;
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
 	CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 	OnRefreshListShowCtrl();

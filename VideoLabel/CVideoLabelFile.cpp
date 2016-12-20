@@ -53,7 +53,7 @@ void CVideoLabelFileIOController::AddVideoFile(CString fileName)
 
 }
 
-void CVideoLabelFileIOController::AddClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label)
+void CVideoLabelFileIOController::AddClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label,CString sublabel)
 {
 	list<CVideoFile>::iterator it = GetIteratorOfFile(fileName);
 	if (it == videoFileList.end())
@@ -69,6 +69,7 @@ void CVideoLabelFileIOController::AddClipLabel(CString fileName, long long start
 		clip.type = type;
 		clip.label = label;
 		clip.domain = domain;
+		clip.sublabel = sublabel;
 		(*it).clipList.push_back(clip);
 	}
 
@@ -93,6 +94,7 @@ void CVideoLabelFileIOController::ModifyClipLabel(CString fileName, int index, C
 		itt->start = newClip.start;
 		itt->type = newClip.type;
 		itt->label = newClip.label;
+		itt->sublabel = newClip.sublabel;
 	}
 	isChanged = true; 
 }
@@ -165,22 +167,14 @@ bool CVideoLabelFileIOController::SaveFileToXML(CString path)
 		for (itt = (*it).clipList.begin(); itt != (*it).clipList.end(); itt++)
 		{
 			TiXmlElement* clip = new TiXmlElement("VClip");
-			CString clipName;
-			clipName = itt->clipFileName;
-			utf_buffer = CreateUTF8TextInitWithString(clipName);
-			clip->SetAttribute("name", utf_buffer);
-			free(utf_buffer);
+			CString num;
+			TinyXMLElementSetCStringAttribute(clip, "name", itt->clipFileName);
 			clip->SetAttribute("start", itt->start);
 			clip->SetAttribute("end", itt->end);
-			utf_buffer = CreateUTF8TextInitWithString(itt->type);
-			clip->SetAttribute("type", utf_buffer);
-			free(utf_buffer);
-			utf_buffer = CreateUTF8TextInitWithString(itt->label);
-			clip->SetAttribute("label", utf_buffer);
-			free(utf_buffer);
-			utf_buffer = CreateUTF8TextInitWithString(itt->domain);
-			clip->SetAttribute("domain", utf_buffer);
-			free(utf_buffer);
+			TinyXMLElementSetCStringAttribute(clip, "type", itt->type);
+			TinyXMLElementSetCStringAttribute(clip, "label", itt->label);
+			TinyXMLElementSetCStringAttribute(clip, "sublabel", itt->sublabel);
+			TinyXMLElementSetCStringAttribute(clip, "domain", itt->domain);
 			file->LinkEndChild(clip);
 		}
 		folder->LinkEndChild(file);
@@ -229,7 +223,6 @@ bool CVideoLabelFileIOController::ReadFileFromXML(CString path)
 			CString tiStr;
 			long ti;
 			CreateString_InitWithUTF8Text(tiStr, clip->Attribute("start"));
-			
 			swscanf_s(tiStr, _T("%ld"), &ti);
 			cclip.start = ti;
 			CreateString_InitWithUTF8Text(tiStr, clip->Attribute("end"));
@@ -238,6 +231,7 @@ bool CVideoLabelFileIOController::ReadFileFromXML(CString path)
 			CreateString_InitWithUTF8Text(cclip.type, clip->Attribute("type"));
 			CreateString_InitWithUTF8Text(cclip.domain, clip->Attribute("domain"));
 			CreateString_InitWithUTF8Text(cclip.label, clip->Attribute("label"));
+			CreateString_InitWithUTF8Text(cclip.sublabel, clip->Attribute("sublabel"));
 			CreateString_InitWithUTF8Text(cclip.clipFileName, clip->Attribute("name"));
 			cfile.clipList.push_back(cclip);
 			clip = clip->NextSiblingElement("VClip");
