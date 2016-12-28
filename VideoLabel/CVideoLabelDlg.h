@@ -97,6 +97,7 @@ protected:
 	vector<int> m_vec_cutPoint;
 	CListCtrl m_lst_show;
 	CBitmapSlider m_Slider;
+	BOOL m_bUseKeyFrame;
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtClearpoint();
@@ -126,4 +127,7 @@ protected:
 	CButton m_bt_lastSec;
 	CButton m_bt_nextSec;
 	CButton m_bt_clear;
+public:
+	afx_msg void OnUseKeyFrame();
+	afx_msg void OnDisableKeyFrame();
 };

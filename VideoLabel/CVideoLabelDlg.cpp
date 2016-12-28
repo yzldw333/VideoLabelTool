@@ -130,6 +130,8 @@ BEGIN_MESSAGE_MAP(CVideoLabelDlg, CDialogEx)
 	ON_COMMAND(ID__32788, &CVideoLabelDlg::OnPressAddLabelItem)
 	ON_COMMAND(ID__32789, &CVideoLabelDlg::OnPressDelLabelItem)
 	ON_COMMAND(ID__32790, &CVideoLabelDlg::OnPressModifyLabelItem)
+	ON_COMMAND(ID_32791, &CVideoLabelDlg::OnUseKeyFrame)
+	ON_COMMAND(ID_32792, &CVideoLabelDlg::OnDisableKeyFrame)
 END_MESSAGE_MAP()
 
 
@@ -200,7 +202,7 @@ BOOL CVideoLabelDlg::OnInitDialog()
 	m_Slider.DrawFocusRect(FALSE);
 	m_bg_pos = -1;
 	m_ed_pos = -1;
-
+	m_bUseKeyFrame = FALSE;
 	//添加快捷键
 	m_hAcc = LoadAccelerators(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	
@@ -822,7 +824,8 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 	OnRefreshListShowCtrl();
 	m_bg_pos = -1;
 	USES_CONVERSION;
-	m_vec_cutPoint = cut(T2A(videoPath));
+	if (m_bUseKeyFrame)
+		m_vec_cutPoint = cut(T2A(videoPath));
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width()-23, 20);
 	m_Slider.SetRange(0, m_player.GetTotalFrame(), TRUE);
 	m_Slider.SetPos(0);
@@ -1302,4 +1305,19 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
 	CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 	OnRefreshListShowCtrl();
+}
+
+
+void CVideoLabelDlg::OnUseKeyFrame()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_bUseKeyFrame = TRUE;
+}
+
+
+
+void CVideoLabelDlg::OnDisableKeyFrame()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_bUseKeyFrame = FALSE;
 }
