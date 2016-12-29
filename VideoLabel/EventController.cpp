@@ -201,4 +201,56 @@ BOOL CEventController::GetROI(CString str, int& startRow, int& startCol, int& en
 	endCol = maxCol;
 	return TRUE;
 }
+list<int> CEventController::GetSquareListROI(CString str)
+{
+	USES_CONVERSION;
+	BOOL valid = TRUE;
+	list<int>v;
+	int maxRow = -1;
+	int minRow = 4;
+	int maxCol = -1;
+	int minCol = 5;
+	str = str.Trim();
+	if (str == _T(""))
+	{
+		return v;
+	}
 
+	CString procStr = str;
+	while (true)
+	{
+		CString n = procStr.SpanExcluding(_T(" "));
+
+		int num = _ttoi(n);
+		if (num <= 0 || num < 10 || num>99)
+		{
+			valid = FALSE;
+		}
+
+		int row = num / 10;
+		int col = num % 10;
+		if (row > maxRow)
+		{
+			maxRow = row;
+		}
+		if (row < minRow)
+		{
+			minRow = row;
+		}
+		if (col > maxCol)
+		{
+			maxCol = col;
+		}
+		if (col < minCol)
+		{
+			minCol = col;
+		}
+		v.push_back(num);
+		procStr = procStr.Right(procStr.GetLength() - n.GetLength() - 1);
+		if (procStr.IsEmpty())
+		{
+			break;
+		}
+	}
+	return v;
+}

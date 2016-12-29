@@ -465,7 +465,7 @@ void CVideoLabelDlg::PrepareBitmapAndReleaseImg(IplImage* img, CDC *pDC, int win
 		int endRow = m_iROI[2];
 		int endCol = m_iROI[3];
 		CPen pen2;
-		pen2.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		pen2.CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 		pOldPen = MemDC.SelectObject(&pen2);
 		MemDC.MoveTo(iShowX + (startCol - 1) / 4.0*iShowWidth , iShowY + (startRow - 1) / 3.0*iShowHeight);
 		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
@@ -476,7 +476,26 @@ void CVideoLabelDlg::PrepareBitmapAndReleaseImg(IplImage* img, CDC *pDC, int win
 		pen2.DeleteObject();
 		MemDC.SelectObject(pOldPen);
 	}
-
+	UpdateData(TRUE);
+	list<int> squareROIList = CEventController::GetInstance()->GetSquareListROI(m_str_roi);
+	list<int>::iterator it;
+	CPen pen3;
+	pen3.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+	pOldPen = MemDC.SelectObject(&pen3);
+	for (it = squareROIList.begin(); it != squareROIList.end(); it++)
+	{
+		int num = *it;
+		int row = num / 10;
+		int col = num % 10;
+		MemDC.MoveTo(iShowX + (col - 1) / 4.0*iShowWidth, iShowY + (row - 1) / 3.0*iShowHeight);
+		MemDC.LineTo(iShowX + (col) / 4.0 * iShowWidth, iShowY + (row - 1) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col) / 4.0 * iShowWidth, iShowY + (row) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col - 1) / 4.0 * iShowWidth, iShowY + (row) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col - 1) / 4.0 * iShowWidth, iShowY + (row - 1) / 3.0 * iShowHeight);
+		//pDC->SelectObject(pOldBrush);
+	}
+	pen3.DeleteObject();
+	MemDC.SelectObject(pOldPen);
 	MemDC.SelectObject(pOldBit);
 	MemDC.DeleteDC();
 	bitmapBuf.push(MemBitmap);
@@ -504,7 +523,7 @@ void CVideoLabelDlg::ShowBitMap(CBitmap *bitmap, CDC* pDC, int windowWidth, int 
 }
 void CVideoLabelDlg::ShowAndReleaseImg(IplImage* img,CDC * pDC,int windowWidth, int windowHeight)    // ID 是Picture Control控件的ID号
 {
-	int iWndWidth = windowWidth;
+	int iWndWidth = windowWidth;    
 	int iWndHeight = windowHeight;
 	int hmWidth = img->width;
 	int hmHeight = img->height;
@@ -560,7 +579,7 @@ void CVideoLabelDlg::ShowAndReleaseImg(IplImage* img,CDC * pDC,int windowWidth, 
 		int endRow = m_iROI[2];
 		int endCol = m_iROI[3];
 		CPen pen2;
-		pen2.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		pen2.CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 		pOldPen = MemDC.SelectObject(&pen2);
 		MemDC.MoveTo(iShowX + (startCol - 1) / 4.0*iShowWidth , iShowY + (startRow - 1) / 3.0*iShowHeight);
 		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
@@ -571,8 +590,26 @@ void CVideoLabelDlg::ShowAndReleaseImg(IplImage* img,CDC * pDC,int windowWidth, 
 		pen2.DeleteObject();
 		MemDC.SelectObject(pOldPen);
 	}
-
-
+	UpdateData(TRUE);
+	list<int> squareROIList = CEventController::GetInstance()->GetSquareListROI(m_str_roi);
+	list<int>::iterator it;
+	CPen pen3;
+	pen3.CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+	pOldPen = MemDC.SelectObject(&pen3);
+	for (it = squareROIList.begin(); it != squareROIList.end(); it++)
+	{
+		int num = *it;
+		int row = num / 10;
+		int col = num % 10;
+		MemDC.MoveTo(iShowX + (col-1) / 4.0*iShowWidth, iShowY + (row -1) / 3.0*iShowHeight);
+		MemDC.LineTo(iShowX + (col) / 4.0 * iShowWidth, iShowY + (row - 1) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col) / 4.0 * iShowWidth, iShowY + (row) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col - 1) / 4.0 * iShowWidth, iShowY + (row) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (col - 1) / 4.0 * iShowWidth, iShowY + (row - 1) / 3.0 * iShowHeight);
+		//pDC->SelectObject(pOldBrush);
+	}
+	pen3.DeleteObject();
+	MemDC.SelectObject(pOldPen);
 	pDC->BitBlt(0, 0, iWndWidth, iWndHeight, &MemDC, 0, 0, SRCCOPY);
 
 
@@ -1027,6 +1064,7 @@ void CVideoLabelDlg::OnBnClickedBtAddlabel()
 		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi) == FALSE)
 		{
 			AfxMessageBox(_T("感兴趣区域不合法！"));
+			return;
 		}
 		HTREEITEM selItem = m_tre_label.GetSelectedItem();
 		if (selItem == NULL)
@@ -1131,6 +1169,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 		if (CEventController::GetInstance()->GetROI(roi, m_iROI[0], m_iROI[1], m_iROI[2], m_iROI[3]) == TRUE)
 			m_drawROI = TRUE;
 		m_str_roi = _T("");
+		UpdateData(FALSE);
 		LocateImage(0);
 	}
 	
@@ -1419,8 +1458,11 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	clip.label = label;
 	clip.type = type;
 	clip.sublabel = sublabel;
-	if (m_str_roi.IsEmpty() == FALSE&&CEventController::GetInstance()->CheckROIStringValid(m_str_roi))
-		clip.roi = m_str_roi;
+	if (m_str_roi.IsEmpty() == FALSE)
+		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi))
+			clip.roi = m_str_roi;
+		else
+			AfxMessageBox(_T("感兴趣区域不合法，ROI无修改"));
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
 	CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 	OnRefreshListShowCtrl();
@@ -1490,5 +1532,6 @@ void CVideoLabelDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			
 	}
 	UpdateData(FALSE);
+	LocateImage(m_player.GetDrawFramePos());
 	CDialogEx::OnLButtonUp(nFlags, point);
 }

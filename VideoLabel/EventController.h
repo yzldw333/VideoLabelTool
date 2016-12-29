@@ -7,6 +7,8 @@
 #include "afxcmn.h"
 #include "Resource.h"
 #include "LabelXMLFile.h"
+#include <list>
+using namespace std;
 //#include "LabelXMLFile.h"
 
 // CImageLabelApp: 
@@ -28,6 +30,7 @@ public:
 	BOOL ReadEnv(CString& folderPath, CString &labelXMLPath);
 	BOOL CheckROIStringValid(CString& str);
 	BOOL GetROI(CString str, int& startRow, int& startCol, int& endRow, int& endCol);
+	list<int>GetSquareListROI(CString str);
 private:
 	CEventController(){}
 	static CEventController* _instance;
