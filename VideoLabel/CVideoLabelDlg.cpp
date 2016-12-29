@@ -1130,6 +1130,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 		CString roi = m_lst_show.GetItemText(delId, 7);
 		if (CEventController::GetInstance()->GetROI(roi, m_iROI[0], m_iROI[1], m_iROI[2], m_iROI[3]) == TRUE)
 			m_drawROI = TRUE;
+		m_str_roi = _T("");
 		LocateImage(0);
 	}
 	
@@ -1418,6 +1419,8 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	clip.label = label;
 	clip.type = type;
 	clip.sublabel = sublabel;
+	if (m_str_roi.IsEmpty() == FALSE&&CEventController::GetInstance()->CheckROIStringValid(m_str_roi))
+		clip.roi = m_str_roi;
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
 	CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 	OnRefreshListShowCtrl();
@@ -1467,10 +1470,22 @@ void CVideoLabelDlg::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		CString tmp;
 		tmp.Format(_T("%d"), num);
-		if (m_str_roi.Find(tmp) == -1)
+		int index = m_str_roi.Find(tmp);
+		if ( index== -1)
 		{
 			tmp = m_str_roi;
 			m_str_roi.Format(_T("%s %d"), tmp, num);
+		}
+		else
+		{
+			if (index > 0)
+			{
+				m_str_roi.Replace(_T(" ")+tmp, _T(""));
+			}
+			else
+			{
+				m_str_roi.Replace(tmp, _T(""));
+			}
 		}
 			
 	}
