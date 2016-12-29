@@ -1035,6 +1035,8 @@ void CVideoLabelDlg::OnBnClickedBtBg()
 	OnBnClickedBtEd();
 	// TODO:  在此添加控件通知处理程序代码
 	m_bg_pos = m_player.GetDrawFramePos();
+	if (m_bg_pos == -1)
+		m_bg_pos = 0;
 	ShowTriangleMark();
 	//合法性检查：标记的开始位置应该在结束位置左侧
 }
@@ -1204,6 +1206,8 @@ void CVideoLabelDlg::OnNMRClickLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 		CMenu menu;
 		VERIFY(menu.LoadMenu(IDR_MENU3));
 		CMenu* popup = menu.GetSubMenu(0);
+		if (m_player.GetIsSubVideoState()==FALSE)
+			popup->EnableMenuItem(ID__32790, 1);
 		ASSERT(popup != NULL);
 		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 	}
@@ -1459,8 +1463,11 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	clip.type = type;
 	clip.sublabel = sublabel;
 	if (m_str_roi.IsEmpty() == FALSE)
-		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi))
+		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi)){
 			clip.roi = m_str_roi;
+			m_str_roi = _T("");
+			UpdateData(FALSE);
+		}
 		else
 			AfxMessageBox(_T("感兴趣区域不合法，ROI无修改"));
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
