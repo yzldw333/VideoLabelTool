@@ -41,8 +41,8 @@ public:
 	void ClearImgBuf();
 	STATE GetState();
 	void SetState(STATE state);
-	void Open(CString path);
-	void Open();
+	BOOL Open(CString path);
+	BOOL Open();
 	BOOL ReadFrameToBuffer();
 	BOOL CVPlayer::ReadFrameFromBuffer(IplImage** pImg);
 	int GetFramePos();

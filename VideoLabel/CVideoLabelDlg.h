@@ -47,6 +47,7 @@ public:
 	void OnRefreshLabelTreeViewCtrl(HTREEITEM hTreeItem, LabelXMLFileNode node);
 	void OnRefreshListShowCtrl();
 	void LocateImage(long pos);
+	void OnDrawROI(CString roi);
 	afx_msg void OnExitSubVideoState();
 	void ShowTriangleMark();
 	TCITEMW CVideoLabelDlg::GetTabSelectItem(CTabCtrl& tabCtrl, TCHAR *buffer);
@@ -86,6 +87,7 @@ protected:
 	HACCEL m_hAcc;
 	CStatic m_picture;
 	CRect m_rect_pic;
+	CRect m_rect_pic_valid;
 	CRect m_rect_thb_bg;
 	CRect m_rect_thb_ed;
 	CVPlayer m_player;
@@ -98,6 +100,9 @@ protected:
 	CListCtrl m_lst_show;
 	CBitmapSlider m_Slider;
 	BOOL m_bUseKeyFrame;
+	BOOL m_bInitDlg;
+	BOOL m_drawROI;
+	int m_iROI[4];
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedBtClearpoint();
@@ -127,7 +132,12 @@ protected:
 	CButton m_bt_lastSec;
 	CButton m_bt_nextSec;
 	CButton m_bt_clear;
+
 public:
 	afx_msg void OnUseKeyFrame();
 	afx_msg void OnDisableKeyFrame();
+protected:
+	CString m_str_roi;
+public:
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };

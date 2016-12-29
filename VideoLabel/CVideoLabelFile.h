@@ -19,6 +19,7 @@ typedef struct CClip
 	CString label;
 	CString sublabel;
 	CString domain;
+	CString roi;
 	CString clipFileName;
 }CClip;
 
@@ -77,7 +78,7 @@ public:
 	void AddVideoFile(CString fileName);
 	list<CVideoFile>::iterator GetIteratorOfFile(CString fileName);
 	list<CClip>::iterator GetIteratorOfClip(CString fileName, int index);
-	void AddClipLabel(CString fileName, long long start, long long end, CString domain, CString type, CString label,CString sublabel);
+	void AddClipLabel(CString fileName, long long start, long long end, CString roi, CString domain, CString type, CString label,CString sublabel);
 	void ModifyClipLabel(CString fileName,int index,CClip newClip);
 	void DeleteClipLabel(CString fileName, int index);
 	bool GetIfExistFile(CString fileName);

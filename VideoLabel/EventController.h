@@ -22,12 +22,12 @@ public:
 	static CEventController* GetInstance();
 	CString OnImportLabelFile();
 	CString OnImportVideoDirectory();
-	BOOL OnAddLabel(CString fileName, CString domain, CString type,CString labelName, CRect drawRect,CRect winRect,CRect picRect, COLORREF color);
 	void OnDeleteImage();
 	void OnModifyLabel();
 	void SaveEnv(CString folderPath, CString labelXMLPath);
 	BOOL ReadEnv(CString& folderPath, CString &labelXMLPath);
-	
+	BOOL CheckROIStringValid(CString& str);
+	BOOL GetROI(CString str, int& startRow, int& startCol, int& endRow, int& endCol);
 private:
 	CEventController(){}
 	static CEventController* _instance;

@@ -5,6 +5,8 @@
 #include "CImportDlg.h"
 #include "Resource.h"
 #include <locale>//头文件
+#include <vector>
+using namespace std;
 CEventController* CEventController::_instance = NULL;
 CEventController::Garbor CEventController::garbor;
 CEventController* CEventController::GetInstance()
@@ -82,17 +84,121 @@ void CEventController::SaveEnv(CString folderPath, CString labelXMLPath)
 	free(old_locale);//还原区域设定
 	f.Close();
 }
+BOOL CEventController::CheckROIStringValid(CString& str)
+{
+	USES_CONVERSION;
+	BOOL valid = TRUE;
+	list<int>v;
+	int maxRow = -1;
+	int minRow = 4;
+	int maxCol = -1;
+	int minCol = 5;
+	str = str.Trim();
+	if (str == _T(""))
+		str = _T("11 12 13 14 21 22 23 24 31 32 33 34");
 
-//BOOL CEventController::OnAddLabel(CString fileName, CString domain, CString type, CString labelName, CRect drawrect, CRect winRect, CRect picRect, COLORREF color)
-//{
-//	CImageLabelFileIOController::GetInstance()->AddImageLabel(fileName, );
-//	CLabel label;
-//	label.rect = GetFrect(drawrect, winRect, picRect);
-//	label.domain = domain;
-//	label.type = type;
-//	label.color = color;
-//	label.name = labelName;
-//	CImageLabelFileIOController::GetInstance()->AddImageLabel(fileName, label);
-//	CImageLabelFileIOController::GetInstance()->SaveFileToXML();
-//	return TRUE;
-//}
+	CString procStr = str;
+	while (true)
+	{
+		CString n = procStr.SpanExcluding(_T(" "));
+
+		int num = _ttoi(n);
+		if (num <=0||num<10||num>99)
+		{
+			valid = FALSE;
+		}
+			
+		int row = num / 10;
+		int col = num % 10;
+		if (row > maxRow)
+		{
+			maxRow = row;
+		}
+		if (row < minRow)
+		{
+			minRow = row;
+		}
+		if (col > maxCol)
+		{
+			maxCol = col;
+		}
+		if (col < minCol)
+		{
+			minCol = col;
+		}
+		v.push_back(num);
+		procStr = procStr.Right(procStr.GetLength() - n.GetLength() - 1);
+		if (procStr.IsEmpty())
+		{
+			break;
+		}
+	}
+	if (valid == FALSE)
+		return FALSE;
+	for (int i = minRow; i <= maxRow&&valid; i++)
+		for (int j = minCol; j <= maxCol&&valid; j++)
+		{
+			int tmp = i * 10 + j;
+			int find = 0;
+			for (list<int>::iterator it = v.begin(); it != v.end(); it++)
+			{
+				if (*it == tmp)
+					find = 1;
+			}
+			if (find == 0)
+			{
+				valid = FALSE;
+				break;
+			}
+				
+		}
+	return valid;
+
+}
+
+BOOL CEventController::GetROI(CString str, int& startRow, int& startCol, int& endRow, int& endCol)
+{
+	if (CheckROIStringValid(str) == FALSE)
+		return FALSE;
+	USES_CONVERSION;
+	int maxRow = -1;
+	int minRow = 4;
+	int maxCol = -1;
+	int minCol = 5;
+	int row = 0;
+	int col = 0;
+	CString procStr = str;
+	while (true)
+	{
+		CString n = procStr.SpanExcluding(_T(" "));
+		row = _ttoi(n.Left(1));
+		col = _ttoi(n.Right(1));
+		if (row > maxRow)
+		{
+			maxRow = row;
+		}
+		if (row < minRow)
+		{
+			minRow = row;
+		}
+		if (col > maxCol)
+		{
+			maxCol = col;
+		}
+		if (col < minCol)
+		{
+			minCol = col;
+		}
+		procStr = procStr.Right(procStr.GetLength() - n.GetLength() - 1);
+		if (procStr.IsEmpty())
+		{
+			break;
+		}
+	}
+	startRow = minRow;
+	startCol = minCol;
+	endRow = maxRow;
+	endCol = maxCol;
+	return TRUE;
+}
+

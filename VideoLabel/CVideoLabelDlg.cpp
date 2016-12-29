@@ -9,9 +9,9 @@
 #include "afxdialogex.h"
 #include "CVideoLabelFile.h"
 #include "CvvImage.h"
-#include "VideoCut/cut.h"
 #include "CTxtDialog.h"
 #include <vector>
+#include "VideoCut/cut.h"
 using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -66,8 +66,10 @@ TCITEMW CVideoLabelDlg::GetTabSelectItem(CTabCtrl& tabCtrl, TCHAR *buffer)
 CVideoLabelDlg::CVideoLabelDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CVideoLabelDlg::IDD, pParent)
 	, m_stt_time(_T(""))
+	, m_str_roi(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_bInitDlg = FALSE;
 }
 
 void CVideoLabelDlg::DoDataExchange(CDataExchange* pDX)
@@ -92,6 +94,7 @@ void CVideoLabelDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LAST1SEC, m_bt_lastSec);
 	DDX_Control(pDX, IDC_BT_NEXT1SEC, m_bt_nextSec);
 	DDX_Control(pDX, IDC_BT_CLEARPOINT, m_bt_clear);
+	DDX_Text(pDX, IDC_EDT_ROI, m_str_roi);
 }
 
 BEGIN_MESSAGE_MAP(CVideoLabelDlg, CDialogEx)
@@ -132,6 +135,7 @@ BEGIN_MESSAGE_MAP(CVideoLabelDlg, CDialogEx)
 	ON_COMMAND(ID__32790, &CVideoLabelDlg::OnPressModifyLabelItem)
 	ON_COMMAND(ID_32791, &CVideoLabelDlg::OnUseKeyFrame)
 	ON_COMMAND(ID_32792, &CVideoLabelDlg::OnDisableKeyFrame)
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 
@@ -140,7 +144,7 @@ END_MESSAGE_MAP()
 BOOL CVideoLabelDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
+	m_bInitDlg = TRUE;
 	// 将“关于...”菜单项添加到系统菜单中。
 
 	// IDM_ABOUTBOX 必须在系统命令范围内。
@@ -189,6 +193,7 @@ BOOL CVideoLabelDlg::OnInitDialog()
 	m_lst_show.InsertColumn(5, _T("Type"), LVCFMT_CENTER, 100);
 	m_lst_show.InsertColumn(6, _T("Label"), LVCFMT_CENTER, 200);
 	m_lst_show.InsertColumn(7, _T("SubLabel"), LVCFMT_CENTER, 200);
+	m_lst_show.InsertColumn(8, _T("Region of Interest"), LVCFMT_CENTER, 300);
 	m_lst_show.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP);//整列拖拽
 	UpdateData(FALSE);
 	// TODO:  在此添加额外的初始化代码
@@ -212,19 +217,20 @@ BOOL CVideoLabelDlg::OnInitDialog()
 		OnImportLabelFile(labelPath);
 		OnImportVideoDir(folderPath);
 	}
+	
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 void CVideoLabelDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
-
+	if (m_bInitDlg == FALSE)
+		return;
 	// TODO: Add your message handler code here
 	//创建对话框时，控件还没有创建，因此不能改变其大小(必须加上这两行代码)
 
 	//计算窗口宽度和高度的改变量  
 	int nIncrementX = cx - 200;
 	int nIncrementY = cy - 150;
-
 	m_tre_file.MoveWindow(0.01*cx, 0.01*cy, 0.12*cx, 0.99*cy);
 	m_picture.MoveWindow(0.14*cx, 0.01*cy, 0.7*cx, 0.65*cy);
 	int sliderwidth = 0.65*cx;
@@ -239,10 +245,11 @@ void CVideoLabelDlg::OnSize(UINT nType, int cx, int cy)
 	m_bt_lastkey.MoveWindow(0.35*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	m_bt_nextkey.MoveWindow(0.42*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	m_bt_bg.MoveWindow(0.49*cx, 0.74*cy, 0.06*cx, 0.03*cy);
-	m_bt_ed.MoveWindow(0.58*cx, 0.74*cy, 0.06*cx, 0.03*cy);
-	m_bt_clear.MoveWindow(0.65*cx, 0.74*cy, 0.06*cx, 0.03*cy);
-	m_bt_addlabel.MoveWindow(0.72*cx, 0.74*cy, 0.06*cx, 0.03*cy);
-	(GetDlgItem(IDC_STT_TIME))->MoveWindow(0.79*cx, 0.74*cy, 0.06*cx, 0.03*cy);
+	m_bt_ed.MoveWindow(0.56*cx, 0.74*cy, 0.06*cx, 0.03*cy);
+	m_bt_clear.MoveWindow(0.63*cx, 0.74*cy, 0.06*cx, 0.03*cy);
+	GetDlgItem(IDC_EDT_ROI)->MoveWindow(0.70*cx, 0.74*cy, 0.12*cx, 0.03*cy);
+	m_bt_addlabel.MoveWindow(0.83*cx, 0.74*cy, 0.06*cx, 0.03*cy);
+	(GetDlgItem(IDC_STT_TIME))->MoveWindow(0.90*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	m_tab_label.MoveWindow(0.85*cx, 0.01*cy, 0.15*cx, 0.03*cy);
 	m_tre_label.MoveWindow(0.85*cx, 0.04*cy, 0.15*cx, 0.62*cy);
 	SetTimer(4, 50, NULL);	//刷新专用
@@ -420,6 +427,7 @@ void CVideoLabelDlg::PrepareBitmapAndReleaseImg(IplImage* img, CDC *pDC, int win
 		iShowWidth = iShowHeight*picRatio;
 		iShowX = iWndWidth / 2 - iShowWidth / 2;
 	}
+	m_rect_pic_valid.SetRect(iShowX, iShowY, iShowWidth + iShowX, iShowHeight + iShowY);
 	CDC MemDC;
 	CBitmap *MemBitmap = new CBitmap();
 	MemDC.CreateCompatibleDC(NULL);
@@ -432,6 +440,43 @@ void CVideoLabelDlg::PrepareBitmapAndReleaseImg(IplImage* img, CDC *pDC, int win
 	cvReleaseImage(&img);
 	cimg.DrawToHDC(MemDC.GetSafeHdc(), &rect);
 	cimg.Destroy();
+	CPen pen;
+	pen.CreatePen(PS_DOT, 1, RGB(200,200,200));//PS_DOT
+	CPen *pOldPen = MemDC.SelectObject(&pen);
+	for (int i = 1; i <3; i++)
+	{
+		MemDC.MoveTo(iShowX, iShowY + iShowHeight*i / 3.0);
+		MemDC.LineTo(iShowX + iShowWidth, iShowY + iShowHeight*i / 3.0);
+	}
+	for (int i = 1; i < 4; i++)
+	{
+		MemDC.MoveTo(iShowX+iShowWidth*i/4.0, iShowY);
+		MemDC.LineTo(iShowX+iShowWidth*i/4.0, iShowY + iShowHeight);
+	}
+	MemDC.SelectObject(pOldPen);
+	pen.DeleteObject();
+	
+	
+
+	if (m_drawROI)
+	{
+		int startRow = m_iROI[0];
+		int startCol = m_iROI[1];
+		int endRow = m_iROI[2];
+		int endCol = m_iROI[3];
+		CPen pen2;
+		pen2.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		pOldPen = MemDC.SelectObject(&pen2);
+		MemDC.MoveTo(iShowX + (startCol - 1) / 4.0*iShowWidth , iShowY + (startRow - 1) / 3.0*iShowHeight);
+		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (endRow) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (startCol - 1) / 4.0 * iShowWidth , iShowY + (endRow) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (startCol - 1) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
+		//pDC->SelectObject(pOldBrush);
+		pen2.DeleteObject();
+		MemDC.SelectObject(pOldPen);
+	}
+
 	MemDC.SelectObject(pOldBit);
 	MemDC.DeleteDC();
 	bitmapBuf.push(MemBitmap);
@@ -492,7 +537,45 @@ void CVideoLabelDlg::ShowAndReleaseImg(IplImage* img,CDC * pDC,int windowWidth, 
 	cimg.CopyOf(img);
 	cimg.DrawToHDC(MemDC.GetSafeHdc(), &rect);
 	cimg.Destroy();
+
+	CPen pen;
+	pen.CreatePen(PS_DOT, 1, RGB(200, 200, 200));//PS_DOT
+	CPen *pOldPen = MemDC.SelectObject(&pen);
+	for (int i = 1; i < 3; i++)
+	{
+		MemDC.MoveTo(iShowX, iShowY + iShowHeight*i / 3.0);
+		MemDC.LineTo(iShowX + iShowWidth, iShowY + iShowHeight*i / 3.0);
+	}
+	for (int i = 1; i < 4; i++)
+	{
+		MemDC.MoveTo(iShowX + iShowWidth*i / 4.0, iShowY);
+		MemDC.LineTo(iShowX + iShowWidth*i / 4.0, iShowY + iShowHeight);
+	}
+	MemDC.SelectObject(pOldPen);
+	pen.DeleteObject();
+	if (m_drawROI)
+	{
+		int startRow = m_iROI[0];
+		int startCol = m_iROI[1];
+		int endRow = m_iROI[2];
+		int endCol = m_iROI[3];
+		CPen pen2;
+		pen2.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		pOldPen = MemDC.SelectObject(&pen2);
+		MemDC.MoveTo(iShowX + (startCol - 1) / 4.0*iShowWidth , iShowY + (startRow - 1) / 3.0*iShowHeight);
+		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (endCol) / 4.0 * iShowWidth , iShowY + (endRow) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (startCol - 1) / 4.0 * iShowWidth , iShowY + (endRow) / 3.0 * iShowHeight);
+		MemDC.LineTo(iShowX + (startCol - 1) / 4.0 * iShowWidth , iShowY + (startRow - 1) / 3.0 * iShowHeight);
+		//pDC->SelectObject(pOldBrush);
+		pen2.DeleteObject();
+		MemDC.SelectObject(pOldPen);
+	}
+
+
 	pDC->BitBlt(0, 0, iWndWidth, iWndHeight, &MemDC, 0, 0, SRCCOPY);
+
+
 	MemDC.SelectObject(pOldBit);
 	MemBitmap.DeleteObject();
 	MemDC.DeleteDC();
@@ -704,9 +787,10 @@ void CVideoLabelDlg::OnRefreshListShowCtrl()
 		m_lst_show.SetItemText(i, 4, itt->type);
 		m_lst_show.SetItemText(i, 5, itt->label);
 		m_lst_show.SetItemText(i, 6, itt->sublabel);
+		m_lst_show.SetItemText(i, 7, itt->roi);
 		i++;
 	}
-	m_lst_show.EnsureVisible(m_lst_show.GetItemCount()-1, FALSE);
+	m_lst_show.EnsureVisible(m_lst_show.GetItemCount() - 1, FALSE);
 }
 void CVideoLabelDlg::OnTcnSelchangeTabLabel(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -807,7 +891,14 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 
-	m_player.Open(videoPath);
+	if (m_player.Open(videoPath) == FALSE){
+		CString tmp = videoPath;
+		CString info;
+		info.Format(_T("视频：%s 存在问题"), tmp);
+		AfxMessageBox(info);
+		return;
+	}
+		
 	
 	// 将解码得到图像信息从缓存中转换成IplImage格式放在frame中
 	m_player.PrepareBuffer();
@@ -837,6 +928,8 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 void CVideoLabelDlg::OnBnClickedBtPlayPause()
 {
 	// TODO:  在此添加控件通知处理程序代码
+	if (GetDlgItem(IDC_EDT_ROI) == this->GetFocus())
+		return;
 	STATE state = m_player.GetState();
 	if (state == STOP || state == PAUSE)
 	{
@@ -920,7 +1013,9 @@ void CVideoLabelDlg::OnBnClickedBtClearpoint()
 	// TODO:  在此添加控件通知处理程序代码
 	m_bg_pos = -1;
 	m_ed_pos = -1;
+	m_str_roi = _T("");
 	ShowTriangleMark();
+	UpdateData(FALSE);
 }
 
 void CVideoLabelDlg::OnBnClickedBtAddlabel()
@@ -928,6 +1023,11 @@ void CVideoLabelDlg::OnBnClickedBtAddlabel()
 	// TODO:  在此添加控件通知处理程序代码
 	if (m_ed_pos>=m_bg_pos)
 	{
+		UpdateData(TRUE);
+		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi) == FALSE)
+		{
+			AfxMessageBox(_T("感兴趣区域不合法！"));
+		}
 		HTREEITEM selItem = m_tre_label.GetSelectedItem();
 		if (selItem == NULL)
 			return;
@@ -950,9 +1050,15 @@ void CVideoLabelDlg::OnBnClickedBtAddlabel()
 		TCITEMW tabItem = GetTabSelectItem(m_tab_label, buffer);
 		CString domain = tabItem.pszText;
 		CString fileName = GetVideoFileTreePath(m_tre_file.GetSelectedItem(), FALSE);
-		CVideoLabelFileIOController::GetInstance()->AddClipLabel(fileName, m_bg_pos, m_ed_pos, domain, type, label,sublabel);
+		CVideoLabelFileIOController::GetInstance()->AddClipLabel(fileName, m_bg_pos, m_ed_pos,m_str_roi,domain, type, label,sublabel);
 		CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 		OnRefreshListShowCtrl();
+		m_str_roi = _T("");
+		UpdateData(FALSE);
+	}
+	else
+	{
+		AfxMessageBox(_T("开始时间需要设置在结束时间之前！"));
 	}
 }
 BOOL CVideoLabelDlg::PreTranslateMessage(MSG* pMsg)
@@ -972,6 +1078,8 @@ BOOL CVideoLabelDlg::PreTranslateMessage(MSG* pMsg)
 	if (WM_KEYFIRST <= pMsg->message&&pMsg->message <= WM_KEYLAST)
 	{
 		HACCEL hAccel = m_hAcc;
+		if (pMsg->wParam == ' '&&GetFocus()==GetDlgItem(IDC_EDT_ROI))
+			return CDialogEx::PreTranslateMessage(pMsg);
 		if (hAccel && ::TranslateAccelerator(m_hWnd, hAccel, pMsg))
 		{
 			return TRUE;
@@ -989,7 +1097,9 @@ void CVideoLabelDlg::OnExitSubVideoState()
 	//m_player.PrepareBuffer();
 	m_Slider.SetRange(0, m_player.GetTotalFrame());
 	m_Slider.SetPos(m_player.GetSubEnd());
+	m_drawROI = FALSE;
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
+	LocateImage(m_player.GetSubEnd());
 }
 void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -998,9 +1108,10 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 	TRACE(_T("double click "));
 	POSITION pos = m_lst_show.GetFirstSelectedItemPosition();
+	int delId;
 	if (pos != NULL)
 	{
-		int delId = m_lst_show.GetNextSelectedItem(pos);
+	    delId = m_lst_show.GetNextSelectedItem(pos);
 		CString index = m_lst_show.GetItemText(delId, 0);
 		CString fileName = m_tre_file.GetItemText(m_tre_file.GetSelectedItem());
 		list<CClip>::iterator it = CVideoLabelFileIOController::GetInstance()->GetIteratorOfClip(fileName,_ttoi(index));
@@ -1016,7 +1127,12 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 		ClearBitmap();
 		ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width() - 23, 20);
 		ShowTriangleMark();
+		CString roi = m_lst_show.GetItemText(delId, 7);
+		if (CEventController::GetInstance()->GetROI(roi, m_iROI[0], m_iROI[1], m_iROI[2], m_iROI[3]) == TRUE)
+			m_drawROI = TRUE;
+		LocateImage(0);
 	}
+	
 }
 
 
@@ -1320,4 +1436,44 @@ void CVideoLabelDlg::OnDisableKeyFrame()
 {
 	// TODO:  在此添加命令处理程序代码
 	m_bUseKeyFrame = FALSE;
+}
+
+
+void CVideoLabelDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	USES_CONVERSION;
+	UpdateData(TRUE);
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	CRect picRect;
+	m_picture.GetWindowRect(&picRect);
+	ScreenToClient(&picRect);
+	point.x -= picRect.left;
+	point.y -= picRect.top;
+	if (m_rect_pic_valid.PtInRect(point) == FALSE)
+	{
+		CDialogEx::OnLButtonUp(nFlags, point);
+		return;
+	}
+	float gridWidth = m_rect_pic_valid.Width() / 4.0;
+	float gridHeight = m_rect_pic_valid.Height() / 3.0;
+	int col = (int)(point.x / gridWidth) + 1;
+	int row = (int)(point.y / gridHeight) + 1;
+	int num = row * 10 + col;
+	if (m_str_roi.IsEmpty())
+	{
+		m_str_roi.Format(_T("%d"), num);
+	}
+	else
+	{
+		CString tmp;
+		tmp.Format(_T("%d"), num);
+		if (m_str_roi.Find(tmp) == -1)
+		{
+			tmp = m_str_roi;
+			m_str_roi.Format(_T("%s %d"), tmp, num);
+		}
+			
+	}
+	UpdateData(FALSE);
+	CDialogEx::OnLButtonUp(nFlags, point);
 }

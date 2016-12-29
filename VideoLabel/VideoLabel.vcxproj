@@ -59,8 +59,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\opencv\build\x86\vc12\lib;$(ProjectDir)\VideoCut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_highgui2410d.lib;opencv_imgproc2410d.lib;opencv_core2410d.lib;cutDll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\opencv\build\x86\vc12\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_highgui2410d.lib;opencv_imgproc2410d.lib;opencv_core2410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

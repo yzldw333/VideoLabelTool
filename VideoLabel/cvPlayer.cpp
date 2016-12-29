@@ -10,11 +10,11 @@ void CVPlayer::SetState(STATE state)
 {
 	this->m_state = state;
 }
-void CVPlayer::Open()
+BOOL CVPlayer::Open()
 { 
-	Open(videoPath);
+	return Open(videoPath);
 }
-void CVPlayer::Open(CString path)
+BOOL CVPlayer::Open(CString path)
 {
 	USES_CONVERSION;
 	this->videoPath = path;
@@ -22,10 +22,14 @@ void CVPlayer::Open(CString path)
 	if (capture != NULL){
 		cvReleaseCapture(&capture);
 	}
+	capture = NULL;
 	capture = cvCaptureFromFile(T2A(path));
+	if (capture == NULL)
+		return FALSE;
 	totalStart = 0;
 	totalEnd = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
 	isSubVideo = FALSE;
+	return TRUE;
 }
 BOOL CVPlayer::PrepareBuffer()
 {
