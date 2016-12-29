@@ -952,8 +952,8 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 	OnRefreshListShowCtrl();
 	m_bg_pos = -1;
 	USES_CONVERSION;
-	if (m_bUseKeyFrame)
-		m_vec_cutPoint = cut(T2A(videoPath));
+	/*if (m_bUseKeyFrame)
+		m_vec_cutPoint = cut(T2A(videoPath));*/
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width()-23, 20);
 	m_Slider.SetRange(0, m_player.GetTotalFrame(), TRUE);
 	m_Slider.SetPos(0);
@@ -1170,7 +1170,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 			m_drawROI = TRUE;
 		m_str_roi = _T("");
 		UpdateData(FALSE);
-		LocateImage(0);
+		LocateImage(it->start);
 	}
 	
 }
