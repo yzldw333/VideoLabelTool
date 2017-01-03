@@ -1,8 +1,113 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Root>
-  <group name ="Video Cut">
-    <class name="Cut Point">
-	<label name="Frame"/>
-    </class>
-  </group>
+    <group name="Basketball">
+        <class name="player">
+            <label name="凯文-杜兰特" />
+            <label name="保罗-乔治" />
+            <label name="斯蒂芬-库里" />
+            <label name="詹姆斯-哈登" />
+            <label name="达米安-利拉德" />
+            <label name="克莱-汤普森" />
+            <label name="拉塞尔-威斯布鲁克" />
+            <label name="勒布朗-詹姆斯" />
+            <label name="凯尔-欧文" />
+            <label name="以赛亚-托马斯" />
+            <label name="克里斯-保罗" />
+            <label name="肯巴-沃克" />
+            <label name="科怀-伦纳德" />
+            <label name="拉马库斯-阿尔德里奇" />
+            <label name="德怀恩-韦德" />
+            <label name="德玛尔-德罗赞" />
+            <label name="CJ-迈克勒姆" />
+            <label name="德克-诺维斯基" />
+            <label name="凯尔-洛瑞" />
+            <label name="埃弗里-布拉德利" />
+        </class>
+        <class name="action">
+            <label name="扣篮">
+                <sublabel name="起跳" />
+                <sublabel name="单手或双手扣篮" />
+            </label>
+            <label name="盖帽">
+                <sublabel name="起跳" />
+                <sublabel name="封盖" />
+            </label>
+            <label name="抢篮板">
+                <sublabel name="球在空中" />
+                <sublabel name="球员争抢到球" />
+            </label>
+            <label name="上篮">
+                <sublabel name="持球行进" />
+                <sublabel name="起跳单手挑篮" />
+            </label>
+            <label name="跳投">
+                <sublabel name="起跳" />
+                <sublabel name="投篮" />
+            </label>
+            <label name="罚球">
+                <sublabel name="持球准备" />
+                <sublabel name="投篮" />
+            </label>
+        </class>
+    </group>
+    <group name="Football">
+        <class name="player">
+            <label name="克洛斯" />
+            <label name="罗本" />
+            <label name="梅西" />
+            <label name="胡梅尔斯" />
+            <label name="诺伊尔" />
+            <label name="拉姆" />
+            <label name="罗德里格斯" />
+            <label name="蒂亚戈席尔瓦" />
+            <label name="穆勒" />
+            <label name="马斯切拉诺" />
+            <label name="拉莫斯" />
+            <label name="德弗莱" />
+            <label name="奥斯卡" />
+            <label name="布林德" />
+            <label name="罗霍" />
+            <label name="迪马利亚" />
+            <label name="苏亚雷斯" />
+            <label name="内马尔" />
+            <label name="C罗" />
+            <label name="阿拉巴" />
+        </class>
+        <class name="action">
+            <label name="铲球">
+                <sublabel name="准备阶段" />
+                <sublabel name="铲球" />
+            </label>
+            <label name="射门">
+                <sublabel name="射门" />
+                <sublabel name="射门准备" />
+            </label>
+            <label name="头球">
+                <sublabel name="球在空中" />
+                <sublabel name="争顶到球" />
+            </label>
+            <label name="点球">
+                <sublabel name="准备阶段" />
+                <sublabel name="罚球阶段" />
+            </label>
+            <label name="任意球">
+                <sublabel name="准备阶段" />
+                <sublabel name="罚球" />
+            </label>
+            <label name="掷界外球">
+                <sublabel name="准备阶段" />
+                <sublabel name="掷球" />
+            </label>
+            <label name="球门球">
+                <sublabel name="捡球" />
+                <sublabel name="发球" />
+            </label>
+            <label name="角球">
+                <sublabel name="准备阶段" />
+                <sublabel name="发球" />
+            </label>
+            <label name="扑球" />
+            <label name="出牌" />
+        </class>
+    </group>
 </Root>

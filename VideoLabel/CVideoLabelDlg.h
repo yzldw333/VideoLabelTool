@@ -12,7 +12,8 @@
 #include "LabelXMLFile.h"
 #include <queue>
 #include <vector>
-#include "CBitmapSlider\BitmapSlider.h"
+#include "CBitmapSlider\BitmapSlider.h"]
+#include "CMyListCtrl\MyListCtrl.h"
 
 #define WM_PREVIEW_IMAGE_WITH_POS WM_USER+930509
 using namespace std;
@@ -97,7 +98,7 @@ protected:
 	LabelXMLFileNode m_labelXMLFileNode;
 //	CSliderCtrl m_sld_player;
 	vector<int> m_vec_cutPoint;
-	CListCtrl m_lst_show;
+	CMyListCtrl m_lst_show;
 	CBitmapSlider m_Slider;
 	BOOL m_bUseKeyFrame;
 	BOOL m_bInitDlg;

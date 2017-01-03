@@ -31,6 +31,12 @@
     <Filter Include="源文件\CBitmapSlider">
       <UniqueIdentifier>{e69897ce-e6f4-4741-90fd-0dfb9ef244c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\CMyListCtrl">
+      <UniqueIdentifier>{69ddd832-35d2-4253-bc0a-cda51c4150f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\CMyListCtrl">
+      <UniqueIdentifier>{4c06a566-5594-46c8-aa20-54a133b53bd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -87,6 +93,9 @@
     <ClInclude Include="TinyXMLCommon.h">
       <Filter>头文件\TinyXML</Filter>
     </ClInclude>
+    <ClInclude Include="CMyListCtrl\MyListCtrl.h">
+      <Filter>头文件\CMyListCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -136,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="TinyXMLCommon.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CMyListCtrl\MyListCtrl.cpp">
+      <Filter>源文件\CMyListCtrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

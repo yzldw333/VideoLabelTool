@@ -110,6 +110,7 @@
     <ClInclude Include="CBitmapSlider\BitmapSlider.h" />
     <ClInclude Include="CBitmapSlider\memdc.h" />
     <ClInclude Include="CImportDlg.h" />
+    <ClInclude Include="CMyListCtrl\MyListCtrl.h" />
     <ClInclude Include="CTxtDialog.h" />
     <ClInclude Include="CVideoLabelFile.h" />
     <ClInclude Include="cvPlayer.h" />
@@ -128,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="CBitmapSlider\BitmapSlider.cpp" />
     <ClCompile Include="CImportDlg.cpp" />
+    <ClCompile Include="CMyListCtrl\MyListCtrl.cpp" />
     <ClCompile Include="CTxtDialog.cpp" />
     <ClCompile Include="CVideoLabelFile.cpp" />
     <ClCompile Include="cvPlayer.cpp" />

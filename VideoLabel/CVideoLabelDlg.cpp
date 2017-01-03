@@ -952,8 +952,8 @@ void CVideoLabelDlg::OnNMDblclkTreFile(NMHDR *pNMHDR, LRESULT *pResult)
 	OnRefreshListShowCtrl();
 	m_bg_pos = -1;
 	USES_CONVERSION;
-	/*if (m_bUseKeyFrame)
-		m_vec_cutPoint = cut(T2A(videoPath));*/
+	if (m_bUseKeyFrame)
+		m_vec_cutPoint = cut(T2A(videoPath));
 	ShowCutPoint(m_Slider_tip.GetDC(), m_rect_pic.Width()-23, 20);
 	m_Slider.SetRange(0, m_player.GetTotalFrame(), TRUE);
 	m_Slider.SetPos(0);
@@ -1181,6 +1181,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 //Right Menu Del Event
 void CVideoLabelDlg::OnDelLabel()
 {
+	int delId = -1;
 	// TODO:  在此添加命令处理程序代码
 	////删除整行选中的===============
 	int count = m_lst_show.GetSelectedCount();
@@ -1188,13 +1189,15 @@ void CVideoLabelDlg::OnDelLabel()
 		POSITION pos = m_lst_show.GetFirstSelectedItemPosition();
 		while (pos != NULL)
 		{
-			int delId = m_lst_show.GetNextSelectedItem(pos);
+			delId = m_lst_show.GetNextSelectedItem(pos);
 			CString fileName = GetVideoFileTreePath(m_tre_file.GetSelectedItem(), FALSE);
 			CVideoLabelFileIOController::GetInstance()->DeleteClipLabel(fileName, delId);
 			CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
 		}
 	}
 	OnRefreshListShowCtrl();
+	if (delId !=-1)
+		m_lst_show.EnsureVisible(delId, TRUE);
 }
 void CVideoLabelDlg::OnNMRClickLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -1438,8 +1441,11 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	
 	
 	HTREEITEM selItem = m_tre_label.GetSelectedItem();
-	if (selItem == NULL)
+	if (selItem == NULL){
+		AfxMessageBox(_T("未选中标签"));
 		return;
+	}
+		
 	CString str[3];
 	int i = 0;
 	HTREEITEM pItem = selItem;
@@ -1463,8 +1469,11 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 	clip.type = type;
 	clip.sublabel = sublabel;
 	if (m_str_roi.IsEmpty() == FALSE)
-		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi)){
+		if (CEventController::GetInstance()->CheckROIStringValid(m_str_roi))
+		{
 			clip.roi = m_str_roi;
+			if (CEventController::GetInstance()->GetROI(m_str_roi, m_iROI[0], m_iROI[1], m_iROI[2], m_iROI[3]) == TRUE)
+				m_drawROI = TRUE;
 			m_str_roi = _T("");
 			UpdateData(FALSE);
 		}
@@ -1472,7 +1481,18 @@ void CVideoLabelDlg::OnPressModifyLabelItem()
 			AfxMessageBox(_T("感兴趣区域不合法，ROI无修改"));
 	CVideoLabelFileIOController::GetInstance()->ModifyClipLabel(fileName,index,clip);
 	CVideoLabelFileIOController::GetInstance()->SaveFileToXML();
-	OnRefreshListShowCtrl();
+
+	CString startTime,endTime;
+	startTime.Format(_T("%d"), clip.start);
+	endTime.Format(_T("%d"), clip.end);
+	m_lst_show.SetItemText(index, 1, startTime);
+	m_lst_show.SetItemText(index, 2, endTime);
+	m_lst_show.SetItemText(index, 3, clip.domain);
+	m_lst_show.SetItemText(index, 4, clip.type);
+	m_lst_show.SetItemText(index, 5, clip.label);
+	m_lst_show.SetItemText(index, 6, clip.sublabel);
+	m_lst_show.SetItemText(index, 7, clip.roi);
+	LocateImage(m_player.GetDrawFramePos());
 }
 
 

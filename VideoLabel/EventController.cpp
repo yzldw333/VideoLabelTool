@@ -60,9 +60,12 @@ BOOL CEventController::ReadEnv(CString& folderPath, CString &labelXMLPath)
 	char* old_locale = _strdup(setlocale(LC_CTYPE, NULL));
 	setlocale(LC_CTYPE, "chs");//设定
 	f.ReadString(folderPath);
+	m_videoPath = folderPath;
 	f.ReadString(labelXMLPath);
+	m_labelPath = labelXMLPath;
 	setlocale(LC_CTYPE, old_locale);
 	free(old_locale);//还原区域设定
+	f.Close();
 	return TRUE;
 }
 void CEventController::SaveEnv(CString folderPath, CString labelXMLPath)
