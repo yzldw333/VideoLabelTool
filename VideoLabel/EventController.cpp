@@ -23,7 +23,7 @@ CString CEventController::OnImportVideoDirectory()
 	if (dlg.DoModal() == IDOK)
 	{
 		m_videoPath = dlg.GetPathName();
-		SaveEnv(m_videoPath, m_labelPath);
+		//SaveEnv(m_videoPath, m_labelPath);
 		return m_videoPath;
 	}
 	else
@@ -43,7 +43,7 @@ CString CEventController::OnImportLabelFile()
 			AfxMessageBox(_T("Â·¾¶ÓÐÎó£¡"));
 			return empty;
 		}
-		SaveEnv(m_videoPath, m_labelPath);
+		//SaveEnv(m_videoPath, m_labelPath);
 		return m_labelPath;
 	}
 	else

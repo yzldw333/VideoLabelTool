@@ -152,6 +152,7 @@
     <ResourceCompile Include="VideoLabel.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="res\VideoLabel.rc2" />
   </ItemGroup>
   <ItemGroup>

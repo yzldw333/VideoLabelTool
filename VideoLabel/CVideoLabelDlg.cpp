@@ -212,11 +212,11 @@ BOOL CVideoLabelDlg::OnInitDialog()
 	m_hAcc = LoadAccelerators(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	
 	CString folderPath, labelPath;
-	if (CEventController::GetInstance()->ReadEnv(folderPath, labelPath) == TRUE)
+	/*if (CEventController::GetInstance()->ReadEnv(folderPath, labelPath) == TRUE)
 	{
 		OnImportLabelFile(labelPath);
 		OnImportVideoDir(folderPath);
-	}
+	}*/
 	
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
