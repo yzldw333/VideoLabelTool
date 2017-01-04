@@ -249,7 +249,7 @@ void CVideoLabelDlg::OnSize(UINT nType, int cx, int cy)
 	m_bt_clear.MoveWindow(0.63*cx, 0.74*cy, 0.06*cx, 0.03*cy);
 	GetDlgItem(IDC_EDT_ROI)->MoveWindow(0.70*cx, 0.74*cy, 0.12*cx, 0.03*cy);
 	m_bt_addlabel.MoveWindow(0.83*cx, 0.74*cy, 0.06*cx, 0.03*cy);
-	(GetDlgItem(IDC_STT_TIME))->MoveWindow(0.90*cx, 0.74*cy, 0.06*cx, 0.03*cy);
+	(GetDlgItem(IDC_STT_TIME))->MoveWindow(0.90*cx, 0.74*cy, 0.09*cx, 0.03*cy);
 	m_tab_label.MoveWindow(0.85*cx, 0.01*cy, 0.15*cx, 0.03*cy);
 	m_tre_label.MoveWindow(0.85*cx, 0.04*cy, 0.15*cx, 0.62*cy);
 	SetTimer(4, 50, NULL);	//刷新专用
@@ -797,8 +797,8 @@ void CVideoLabelDlg::OnRefreshListShowCtrl()
 {
 	m_lst_show.DeleteAllItems();
 	HTREEITEM pItem = m_tre_file.GetSelectedItem();
-	CString fileName = m_tre_file.GetItemText(pItem);
-
+	//CString fileName = m_tre_file.GetItemText(pItem);
+	CString fileName = GetVideoFileTreePath(pItem,FALSE);
 	CVideoLabelFileIOController* _instance = CVideoLabelFileIOController::GetInstance();
 	list<CVideoFile>::iterator it = _instance->GetIteratorOfFile(fileName);
 	if (it == _instance->videoFileList.end())
@@ -867,7 +867,7 @@ void CVideoLabelDlg::InitVideoFileTreeView(HTREEITEM hparent)
 		{
 			CString fileName = file.GetFileName();
 			CString postFix = fileName.Right(3);
-			if (postFix == "mp4" || postFix == "MP4" || postFix == "mkv" || postFix == "MKV" || postFix == "avi" || postFix == "AVI")
+			if (postFix == "mp4" || postFix == "MP4" || postFix == "mkv" || postFix == "MKV" || postFix == "avi" || postFix == "AVI"||postFix=="rmvb"||postFix=="RMVB")
 			{
 				HTREEITEM hItem = m_tre_file.InsertItem(fileName, hparent); //添加盘符路径下树状文件夹
 				fileName = GetVideoFileTreePath(hItem, FALSE);
@@ -1153,7 +1153,7 @@ void CVideoLabelDlg::OnNMDblclkLstShow(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 	    delId = m_lst_show.GetNextSelectedItem(pos);
 		CString index = m_lst_show.GetItemText(delId, 0);
-		CString fileName = m_tre_file.GetItemText(m_tre_file.GetSelectedItem());
+		CString fileName = GetVideoFileTreePath(m_tre_file.GetSelectedItem(),FALSE);
 		list<CClip>::iterator it = CVideoLabelFileIOController::GetInstance()->GetIteratorOfClip(fileName,_ttoi(index));
 		m_player.SetSubStart(it->start);
 		m_player.SetSubEnd(it->end);

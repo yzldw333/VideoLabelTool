@@ -27,6 +27,10 @@ public:
 	void SetHoverItemTextColor(COLORREF color,BOOL bDraw=TRUE);
 	//设置选中行文本颜色
 	void SetSelectItemTextColor(COLORREF color,BOOL bDraw=TRUE);
+	//设置选中行文本颜色
+	void SetSSelectItemTextColor(COLORREF color, BOOL bDraw = TRUE);
+	//设置选中行背景颜色
+	void SetSSelectItemBkColor(COLORREF color, BOOL bDraw = TRUE);
 protected:
 	BOOL m_bTracking;
 	int m_nHoverIndex;//当前热点项目索引
@@ -38,6 +42,9 @@ protected:
 	COLORREF m_EvenItemTextColor;//偶数行文本颜色
 	COLORREF m_HoverItemTextColor;//热点行文本颜色
 	COLORREF m_SelectItemTextColor;//选中行文本颜色
+	COLORREF m_SSelectItemTextColor;
+	COLORREF m_SSelectItemBkColor;
+	int m_selIndex;
 protected:
 	DECLARE_MESSAGE_MAP()
 public:

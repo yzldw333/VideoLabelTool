@@ -18,6 +18,8 @@ CMyListCtrl::CMyListCtrl()
 	m_EvenItemTextColor=GetSysColor(COLOR_BTNTEXT);//Å¼ÊýÐÐÎÄ±¾ÑÕÉ«
 	m_HoverItemTextColor=GetSysColor(COLOR_HIGHLIGHTTEXT);//ÈÈµãÐÐÎÄ±¾ÑÕÉ«
 	m_SelectItemTextColor=GetSysColor(COLOR_BTNTEXT);//Ñ¡ÖÐÐÐÎÄ±¾ÑÕÉ«
+	m_SSelectItemTextColor = GetSysColor(COLOR_BTNTEXT);//Ñ¡ÖÐÐÐÎÄ±¾ÑÕÉ«
+	m_SSelectItemBkColor = GetSysColor(COLOR_HIGHLIGHT);//Ñ¡ÖÐÐÐ±³¾°ÑÕÉ«
 	m_nHoverIndex=-1;
 	m_bTracking=FALSE;
 }
@@ -58,6 +60,11 @@ void CMyListCtrl::SetSelectItemBkColor(COLORREF color,BOOL bDraw)//ÉèÖÃÑ¡ÖÐÐÐ±³¾
 	m_SelectItemBkColor=color;
 	if(bDraw)InvalidateRect(NULL);
 }
+void CMyListCtrl::SetSSelectItemBkColor(COLORREF color, BOOL bDraw)//ÉèÖÃÑ¡ÖÐÐÐ±³¾°ÑÕÉ«
+{
+	m_SSelectItemBkColor = color;
+	if (bDraw)InvalidateRect(NULL);
+}
 void CMyListCtrl::SetOddItemTextColor(COLORREF color,BOOL bDraw)//ÉèÖÃÆæÊýÐÐÎÄ±¾ÑÕÉ«
 {
 	m_OddItemTextColor=color;
@@ -78,7 +85,11 @@ void CMyListCtrl::SetSelectItemTextColor(COLORREF color,BOOL bDraw)//ÉèÖÃÑ¡ÖÐÐÐÎ
 	m_SelectItemTextColor=color;
 	if(bDraw)InvalidateRect(NULL);
 }
-
+void CMyListCtrl::SetSSelectItemTextColor(COLORREF color, BOOL bDraw)//ÉèÖÃÑ¡ÖÐÐÐÎÄ±¾ÑÕÉ«
+{
+	m_SSelectItemTextColor = color;
+	if (bDraw)InvalidateRect(NULL);
+}
 
 void CMyListCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -132,15 +143,22 @@ void CMyListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			pNMCD->clrTextBk=m_HoverItemBkColor;
 			pNMCD->clrText=m_HoverItemTextColor;
 		}else if(GetItemState(nItemIndex,LVIS_SELECTED) == LVIS_SELECTED){ //Ñ¡ÖÐÐÐ
+			m_selIndex = nItemIndex;
 			pNMCD->clrTextBk=m_SelectItemBkColor;
 			pNMCD->clrText=pNMCD->clrFace=m_SelectItemTextColor;
 			::SetTextColor(pNMCD->nmcd.hdc,m_SelectItemTextColor);
 		}else if(nItemIndex % 2==0){//Å¼ÊýÐÐ ±ÈÈç 0¡¢2¡¢4¡¢6
 			pNMCD->clrTextBk=m_EvenItemBkColor;
 			pNMCD->clrText=m_EvenItemTextColor;
-		}else{	//ÆæÊýÐÐ ±ÈÈç 1¡¢3¡¢5¡¢7
+		}else if(nItemIndex %2 ==1){	//ÆæÊýÐÐ ±ÈÈç 1¡¢3¡¢5¡¢7
 			pNMCD->clrTextBk=m_OddItemBkColor;
 			pNMCD->clrText=m_OddItemTextColor;
+		}
+		else if (nItemIndex == m_selIndex)
+		{
+			pNMCD->clrTextBk = m_SSelectItemBkColor;
+			pNMCD->clrText = pNMCD->clrFace = m_SSelectItemTextColor;
+			::SetTextColor(pNMCD->nmcd.hdc, m_SelectItemTextColor);
 		}
 		*pResult = CDRF_NEWFONT;
 	}
