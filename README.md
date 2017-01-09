@@ -1,4 +1,5 @@
-# This is a tool for users who need to prepare video labeled data. You can use it to make action recognition dataset, video split dataset.
+# This is a tool for users who need to prepare video labeled data. You can use it to make action recognition dataset, video split dataset.  
+![png](Documents/Dialog.png)
 * It is developed with MFC,OpenCV. Thank LiShi Yuan for Key Frame Cut algorithm.
 * If it has some errs, please contact me at any time.  
 * Email: yzldw333@gmail.com  
